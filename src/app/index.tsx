@@ -1,98 +1,112 @@
-import * as Device from 'expo-device';
-import { Platform, StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useCallback, useEffect, useState } from "react";
+import { Dimensions, Pressable, StyleSheet, Text, View } from "react-native";
 
-import { AnimatedIcon } from '@/components/animated-icon';
-import { HintRow } from '@/components/hint-row';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { WebBadge } from '@/components/web-badge';
-import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
+const SCREEN_HEIGHT = Dimensions.get("window").height;
 
-function getDevMenuHint() {
-  if (Platform.OS === 'web') {
-    return <ThemedText type="small">use browser devtools</ThemedText>;
-  }
-  if (Device.isDevice) {
-    return (
-      <ThemedText type="small">
-        shake device or press <ThemedText type="code">m</ThemedText> in terminal
-      </ThemedText>
-    );
-  }
-  const shortcut = Platform.OS === 'android' ? 'cmd+m (or ctrl+m)' : 'cmd+d';
-  return (
-    <ThemedText type="small">
-      press <ThemedText type="code">{shortcut}</ThemedText>
-    </ThemedText>
-  );
-}
+// These numbers control the bird's movement limits.
+const CEILING = 80;
+const FLOOR = SCREEN_HEIGHT - 100;
 
 export default function HomeScreen() {
+  // This controls how far the bird is from the top of the screen.
+  const [birdY, setBirdY] = useState(250);
+
+  // This keeps track of how many times the player flapped.
+  const [flapCount, setFlapCount] = useState(0);
+
+  // This function makes the bird flap upward.
+  // useCallback helps us safely reuse this function in the keyboard listener.
+  const flapBird = useCallback(() => {
+    // Move the bird upward, but do not let it go above the ceiling.
+    setBirdY((currentY) => {
+      return Math.max(currentY - 45, CEILING);
+    });
+
+    // Increase the flap counter.
+    setFlapCount((currentCount) => currentCount + 1);
+  }, []);
+
+  // This creates gravity.
+  // Every 30 milliseconds, the bird moves downward a little.
+  useEffect(() => {
+    const gravity = setInterval(() => {
+      setBirdY((currentY) => {
+        // Prevent the bird from falling below the floor.
+        return Math.min(currentY + 3, FLOOR);
+      });
+    }, 30);
+
+    // This cleans up the timer when the screen closes.
+    return () => clearInterval(gravity);
+  }, []);
+
+  // This listens for the spacebar on PC/web.
+  useEffect(() => {
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.code === "Space") {
+        // Prevent the browser from scrolling when spacebar is pressed.
+        event.preventDefault();
+
+        flapBird();
+      }
+    }
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    // This removes the keyboard listener when the screen closes.
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [flapBird]);
+
   return (
-    <ThemedView style={styles.container}>
-      <SafeAreaView style={styles.safeArea}>
-        <ThemedView style={styles.heroSection}>
-          <AnimatedIcon />
-          <ThemedText type="title" style={styles.title}>
-            Welcome to&nbsp;Expo
-          </ThemedText>
-        </ThemedView>
+    <Pressable style={styles.screen} onPress={flapBird}>
+      <Text style={styles.title}>Feather Dash</Text>
+      <Text style={styles.instructions}>Press Spacebar to flap!</Text>
+      <Text style={styles.score}>Flaps: {flapCount}</Text>
 
-        <ThemedText type="code" style={styles.code}>
-          get started
-        </ThemedText>
-
-        <ThemedView type="backgroundElement" style={styles.stepContainer}>
-          <HintRow
-            title="Try editing"
-            hint={<ThemedText type="code">src/app/index.tsx</ThemedText>}
-          />
-          <HintRow title="Dev tools" hint={getDevMenuHint()} />
-          <HintRow
-            title="Fresh start"
-            hint={<ThemedText type="code">npm run reset-project</ThemedText>}
-          />
-        </ThemedView>
-
-        {Platform.OS === 'web' && <WebBadge />}
-      </SafeAreaView>
-    </ThemedView>
+      {/* Temporary bird. Later we can replace this with an image. */}
+      <View style={[styles.bird, { top: birdY }]}>
+        <Text style={styles.birdText}>🐦</Text>
+      </View>
+    </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  screen: {
     flex: 1,
-    justifyContent: 'center',
-    flexDirection: 'row',
+    backgroundColor: "#87ceeb",
+    alignItems: "center",
   },
-  safeArea: {
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    alignItems: 'center',
-    gap: Spacing.three,
-    paddingBottom: BottomTabInset + Spacing.three,
-    maxWidth: MaxContentWidth,
-  },
-  heroSection: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    gap: Spacing.four,
-  },
+
   title: {
-    textAlign: 'center',
+    fontSize: 36,
+    fontWeight: "bold",
+    marginTop: 50,
   },
-  code: {
-    textTransform: 'uppercase',
+
+  instructions: {
+    fontSize: 18,
+    marginTop: 10,
   },
-  stepContainer: {
-    gap: Spacing.three,
-    alignSelf: 'stretch',
-    paddingHorizontal: Spacing.three,
-    paddingVertical: Spacing.four,
-    borderRadius: Spacing.four,
+
+  score: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginTop: 10,
+  },
+
+  bird: {
+    position: "absolute",
+    left: 100,
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: "white",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  birdText: {
+    fontSize: 36,
   },
 });
