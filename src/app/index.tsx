@@ -22,9 +22,19 @@ const FLOOR = SCREEN_HEIGHT - 80;
 // Pipe settings
 const PIPE_WIDTH = 70;
 const PIPE_SPEED = 5;
-const TOP_PIPE_HEIGHT = 150;
 const GAP_HEIGHT = 230;
-const BOTTOM_PIPE_TOP = TOP_PIPE_HEIGHT + GAP_HEIGHT;
+
+// These numbers control how high or low the pipe gap can appear.
+const MIN_TOP_PIPE_HEIGHT = 80;
+const MAX_TOP_PIPE_HEIGHT = SCREEN_HEIGHT - GAP_HEIGHT - 120;
+
+// This creates a random height for the top pipe.
+function getRandomTopPipeHeight() {
+  return (
+    Math.floor(Math.random() * (MAX_TOP_PIPE_HEIGHT - MIN_TOP_PIPE_HEIGHT + 1)) +
+    MIN_TOP_PIPE_HEIGHT
+  );
+}
 
 export default function HomeScreen() {
   // Controls how far the bird is from the top of the screen.
@@ -42,6 +52,13 @@ export default function HomeScreen() {
   // Controls the pipe's horizontal position.
   const [pipeX, setPipeX] = useState(SCREEN_WIDTH);
 
+  // Controls the height of the top pipe.
+  // This changes whenever the pipe resets.
+  const [topPipeHeight, setTopPipeHeight] = useState(getRandomTopPipeHeight());
+
+  // The bottom pipe starts after the gap.
+  const bottomPipeTop = topPipeHeight + GAP_HEIGHT;
+
   // Tracks whether the player has hit a pipe.
   const [gameOver, setGameOver] = useState(false);
 
@@ -52,6 +69,7 @@ export default function HomeScreen() {
     setScore(0);
     setHasScoredPipe(false);
     setPipeX(SCREEN_WIDTH);
+    setTopPipeHeight(getRandomTopPipeHeight());
     setGameOver(false);
   }
 
@@ -99,9 +117,10 @@ export default function HomeScreen() {
         }
 
         // If the pipe goes off the left side,
-        // reset it back to the right side.
+        // reset it back to the right side and randomize the gap.
         if (currentX < -PIPE_WIDTH) {
           setHasScoredPipe(false);
+          setTopPipeHeight(getRandomTopPipeHeight());
           return SCREEN_WIDTH;
         }
 
@@ -145,10 +164,10 @@ export default function HomeScreen() {
 
     // Top pipe hitbox
     const topPipeTop = 0;
-    const topPipeBottom = TOP_PIPE_HEIGHT;
+    const topPipeBottom = topPipeHeight;
 
     // Bottom pipe hitbox
-    const bottomPipeTop = BOTTOM_PIPE_TOP;
+    const bottomPipeTopHitbox = bottomPipeTop;
     const bottomPipeBottom = SCREEN_HEIGHT;
 
     // Checks if the bird overlaps the top pipe.
@@ -162,13 +181,13 @@ export default function HomeScreen() {
     const hitsBottomPipe =
       birdRight > pipeLeft &&
       birdLeft < pipeRight &&
-      birdBottom > bottomPipeTop &&
+      birdBottom > bottomPipeTopHitbox &&
       birdTop < bottomPipeBottom;
 
     if (hitsTopPipe || hitsBottomPipe) {
       setGameOver(true);
     }
-  }, [birdY, pipeX, gameOver]);
+  }, [birdY, pipeX, topPipeHeight, bottomPipeTop, gameOver]);
 
   // Spacebar controls for PC/web.
   useEffect(() => {
@@ -215,7 +234,7 @@ export default function HomeScreen() {
           {
             left: pipeX,
             top: 0,
-            height: TOP_PIPE_HEIGHT,
+            height: topPipeHeight,
           },
         ]}
       />
@@ -226,8 +245,8 @@ export default function HomeScreen() {
           styles.pipe,
           {
             left: pipeX,
-            top: BOTTOM_PIPE_TOP,
-            height: SCREEN_HEIGHT - BOTTOM_PIPE_TOP,
+            top: bottomPipeTop,
+            height: SCREEN_HEIGHT - bottomPipeTop,
           },
         ]}
       />
