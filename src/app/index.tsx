@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import {
   Dimensions,
+  ImageBackground,
   Platform,
   Pressable,
   StyleSheet,
@@ -208,7 +209,12 @@ export default function HomeScreen() {
   }, [flapBird]);
 
   return (
-    <Pressable style={styles.screen} onPress={flapBird}>
+  <Pressable style={styles.screen} onPress={flapBird}>
+    <ImageBackground
+      source={require("../../assets/images/background.png")}
+      style={styles.background}
+      resizeMode="cover"
+    />
       <View style={styles.hud}>
         <Text style={styles.title}>Feather Dash</Text>
 
@@ -255,12 +261,23 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
-  screen: {
-    flex: 1,
-    backgroundColor: "#87ceeb",
-    alignItems: "center",
-  },
-
+  background: {
+  position: "absolute",
+  top: 0,
+  left: 0,
+  right: 0,
+  bottom: 0,
+  width: "100%",
+  height: "100%",
+  zIndex: 0,
+},
+screen: {
+  flex: 1,
+  width: "100%",
+  height: "100%",
+  backgroundColor: "#87ceeb",
+  alignItems: "center",
+},
   hud: {
     alignItems: "center",
     zIndex: 10,
@@ -309,5 +326,6 @@ const styles = StyleSheet.create({
     width: PIPE_WIDTH,
     backgroundColor: "green",
     borderRadius: 10,
+    zIndex: 4,
   },
 });
