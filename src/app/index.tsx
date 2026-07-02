@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import {
   Dimensions,
+  Image,
   ImageBackground,
   Platform,
   Pressable,
@@ -228,10 +229,13 @@ export default function HomeScreen() {
         <Text style={styles.flaps}>Flaps: {flapCount}</Text>
       </View>
 
-      {/* Temporary bird. Later we can replace this with an image. */}
+      {/* raven */}
       <View style={[styles.bird, { top: birdY }]}>
-        <Text style={styles.birdText}>🐦</Text>
-      </View>
+  <Image
+    source={require("../../assets/images/bird.png")}
+    style={styles.birdImage}
+  />
+</View>
 
       {/* Top pipe */}
       <View
@@ -317,9 +321,11 @@ screen: {
     zIndex: 5,
   },
 
-  birdText: {
-    fontSize: 36,
-  },
+  birdImage: {
+  width: 55,
+  height: 55,
+  resizeMode: "contain",
+},
 
   pipe: {
     position: "absolute",
