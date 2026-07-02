@@ -1,56 +1,55 @@
-# Welcome to your Expo app 👋
+# Feather Dash
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Feather is a simple mobile game built with React Native and Expo. The player controls a bird by tapping the screen on mobile or pressing the spacebar while testing in the browser. The goal is to guide the bird through moving pipe gaps without hitting the pipes
 
-## Get started
+The app includes a custom background image, a custom bird image, a custom app icon, collision detection, scoring, randomized pipe gaps, game over/restart behavior, and a saved high score using local storage.
 
-1. Install dependencies
+[Software Demo Video](PASTE_YOUR_VIDEO_LINK_HERE)
 
-   ```bash
-   npm install
-   ```
+## Instructions for Build and Use
 
-2. Start the app
+Steps to build and/or run the software:
 
-   ```bash
-   npx expo start
-   ```
+1. Install Node.js.
+2. Open the project folder in Visual Studio Code.
+3. Install the project dependencies:
 
-In the output, you'll find options to open the app in a
+## Instructions for using the software
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+1. tart the app using Expo.
+2. Tap the screen or press the spacebar to make the bird flap upward.
+3. Fly through the pipe gaps to increase your score.
+4. Avoid hitting the pipes.
+5. If the bird hits a pipe, the game ends.
+6. Tap the screen or press the spacebar again to restart.
+7. Try to beat your saved high score.
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+## Development Environment
 
-## Get a fresh project
+To recreate the development environment, you need the following software and/or libraries with the specified versions:
 
-When you're ready, run:
+* FVisual Studio Code
+* Node.js
+* npm / npx
+* Expo
+* React Native
+* TypeScript
+* React Native AsyncStorage
 
-```bash
-npm run reset-project
-```
+## Useful Websites to Learn More
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+I found these websites useful in developing this software:
 
-### Other setup steps
+* [React native documentation](https://reactnative.dev/?utm_source=chatgpt.com)
+* [Expo Documentation](https://docs.expo.dev/?utm_source=chatgpt.com)
+* [Expo Router Documentaion](https://docs.expo.dev/router/introduction/)
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+## Future Work
 
-## Learn more
+The following items I plan to fix, improve, and/or add to this project in the future:
 
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+* [ ] Add sound effects for flapping, scoring, and collisions
+* [ ]Add multiple pipes on screen at the same time
+* [ ]Add difficulty levels that increase pipe speed over time
+* [ ]Add a start menu and instructions screen
+* [ ]Improve the bird artwork and animations
