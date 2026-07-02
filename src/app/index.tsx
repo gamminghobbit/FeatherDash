@@ -1,3 +1,4 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useCallback, useEffect, useState } from "react";
 import {
   Dimensions,
@@ -45,8 +46,9 @@ export default function HomeScreen() {
   // Counts how many times the player flapped.
   const [flapCount, setFlapCount] = useState(0);
 
-  // Tracks the player's score.
+  // Tracks the player's score & high score.
   const [score, setScore] = useState(0);
+  const [highScore, setHighScore] = useState(0);
 
   // Prevents the same pipe from giving more than one point.
   const [hasScoredPipe, setHasScoredPipe] = useState(false);
@@ -74,7 +76,35 @@ export default function HomeScreen() {
     setTopPipeHeight(getRandomTopPipeHeight());
     setGameOver(false);
   }
+useEffect(() => {
+  async function loadHighScore() {
+    try {
+      const savedHighScore = await AsyncStorage.getItem("highScore");
 
+      if (savedHighScore !== null) {
+        setHighScore(Number(savedHighScore));
+      }
+    } catch (error) {
+      console.log("Could not load high score:", error);
+    }
+  }
+
+  loadHighScore();
+}, []);
+useEffect(() => {
+  async function saveHighScore() {
+    if (score > highScore) {
+      try {
+        setHighScore(score);
+        await AsyncStorage.setItem("highScore", String(score));
+      } catch (error) {
+        console.log("Could not save high score:", error);
+      }
+    }
+  }
+
+  saveHighScore();
+}, [score, highScore]);
   // Makes the bird flap upward.
   const flapBird = useCallback(() => {
     // If the game is over, pressing space/tapping restarts the game.
@@ -226,7 +256,8 @@ export default function HomeScreen() {
         </Text>
 
         <Text style={styles.score}>Score: {score}</Text>
-        <Text style={styles.flaps}>Flaps: {flapCount}</Text>
+<Text style={styles.highScore}>High Score: {highScore}</Text>
+<Text style={styles.flaps}>Flaps: {flapCount}</Text>
       </View>
 
       {/* raven */}
@@ -308,6 +339,11 @@ screen: {
     fontSize: 18,
     marginTop: 5,
   },
+  highScore: {
+  fontSize: 20,
+  fontWeight: "bold",
+  marginTop: 5,
+},
 
   bird: {
     position: "absolute",
